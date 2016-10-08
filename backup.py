@@ -62,12 +62,13 @@ def delete_old_vdi(vm,sr):
     cmd="xe vdi-list sr-uuid="+sr.get("uuid")+" tags:contains="+vm.get("uuid")
     log(cmd)
     output = commands.getoutput(cmd)
-    for vdi in output.split("\n\n\n"):
-      lines = vdi.splitlines()
-      uuid = lines[0].split(":")[1][1:]
-      cmd = "xe vdi-destroy uuid="+uuid
-      log(cmd)
-      commands.getoutput(cmd)
+    if output!=None:
+        for vdi in output.split("\n\n\n"):
+          lines = vdi.splitlines()
+          uuid = lines[0].split(":")[1][1:]
+          cmd = "xe vdi-destroy uuid="+uuid
+          log(cmd)
+          commands.getoutput(cmd)
 
 def backup_vm(vm,sr):
    result = False
