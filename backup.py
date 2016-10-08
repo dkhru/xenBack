@@ -56,7 +56,8 @@ def get_vm_vdis(uuid):
     return result
 
 def log(message):
-    print time.strftime("%Y-%m-%d %H:%M", time.gmtime())+' '+message
+    timestamp = time.strftime("%Y-%m-%d %H:%M", time.gmtime())
+    print timestamp+' '+message
 
 def delete_old_vdi(vm,sr):
     cmd="xe vdi-list sr-uuid="+sr.get("uuid")+" tags:contains="+vm.get("uuid")
