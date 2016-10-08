@@ -76,7 +76,7 @@ def backup_vm(vm,sr):
        return False
    timestamp = time.strftime("%Y-%m-%d %H:%M", time.gmtime())
    log("Creating snapshot for "+vm.get("name")+" UUID:"+vm.get("uuid"))
-   cmd = "xe vm-snapshot uuid=" + vm.get("uuid") + " new-name-label="+vm.get("name")+' '+timestamp
+   cmd = "xe vm-snapshot uuid=" + vm.get("uuid") + ' new-name-label="'+vm.get("name")+'" '+timestamp
    log(cmd)
    status, snapshot_uuid = commands.getstatusoutput(cmd)
    print str(status) + ' vmps:'+ vmps
@@ -98,7 +98,7 @@ def backup_vm(vm,sr):
                 +snapshot_uuid
                 +" VDI_name:"+vdi.get("name"))
             return False
-       cmd = "xe vdi-param-set name-description=Backup VM:"+vm.get("name")+" VDI:" +vdi.get("name")+" on "+timestamp+" uuid="+vdi_uuid
+       cmd = "xe vdi-param-set name-description=\"Backup VM:"+vm.get("name")+" VDI:" +vdi.get("name")+" on "+timestamp+"\" uuid="+vdi_uuid
        log(cmd)
        commands.getoutput(cmd)
        log(cmd)
