@@ -56,8 +56,7 @@ def get_vm_vdis(uuid):
     return result
 
 def log(message):
-    timestamp = time.strftime("%Y-%m-%d %H:%M", time.gmtime())
-    print timestamp+' '+message
+    print time.strftime("%Y-%m-%d %H:%M", time.gmtime())+' '+str(message)
 
 def delete_old_vdi(vm,sr):
     cmd="xe vdi-list sr-uuid="+sr.get("uuid")+" tags:contains="+vm.get("uuid")
@@ -71,7 +70,7 @@ def delete_old_vdi(vm,sr):
 
 def backup_vm(vm,sr):
    cmd="xe vm-param-get param-name=power-state uuid="+vm.get("uuid")
-   vmps=commands.getoutput(cmd)
+   status, vmps = commands.getstatusoutput(cmd)
    if vmps!="running":
        log("Skip backup for "+vm.get("name")+" UUID:"+vm.get("uuid")+" power-state is "+vmps)
        return False
@@ -79,7 +78,8 @@ def backup_vm(vm,sr):
    log("Creating snapshot for "+vm.get("name")+" UUID:"+vm.get("uuid"))
    cmd = "xe vm-snapshot uuid=" + vm.get("uuid") + " new-name-label="+vm.get("name")+' '+timestamp
    log(cmd)
-   (status, snapshot_uuid) = commands.getstatusoutput(cmd)
+   status, snapshot_uuid = commands.getstatusoutput(cmd)
+   print str(status) + ' vmps:'+ vmps
    if status!=0 :
        log("Can not create snapshot for "+ vm.get("name")+" UUID:"+vm.get("uuid")+" "+snapshot_uuid)
        return False
@@ -91,7 +91,7 @@ def backup_vm(vm,sr):
    for vdi in get_vm_vdis(snapshot_uuid) :
        cmd = "xe vdi-copy sr-uuid="+sr.get("uuid")+" uuid="+vdi.get("uuid")
        log(cmd)
-       (status, vdi_uuid) = commands.getstatusoutput(cmd) #backup vdi uuid
+       status, vdi_uuid = commands.getstatusoutput(cmd) #backup vdi uuid
        if status!=0 :
             log(
                 "Can not copy vdi for "+ vm.get("name")+" UUID:"+vm.get("uuid")+" "
@@ -115,11 +115,14 @@ cnt_v = 0
 cnt_e = 0
 log(conf)
 for vm in conf.get('vms') :
-    res=backup_vm(vm, conf.get("backup_sr"))
+    try:
+        res=backup_vm(vm, conf.get("backup_sr"))
+    except Exception :
+        res = False
     if res:
         cnt_v+=1
     else:
         cnt_e+=1
         if conf.get("stopOnError"):
          sys.exit(1)
-log("Backup complete Backed up "+cnt_v+" VM's, "+cnt_e+" occurred.")
+log("Backup complete Backed up "+str(cnt_v)+" VM's, "+str(cnt_e)+" error occurred.")
