@@ -13,12 +13,12 @@ def deunicodify_hook(pairs):
     return dict(new_pairs)
 
 def get_config():
-   parser = argparse.ArgumentParser(description='sum the integers at the command line')
+   parser = argparse.ArgumentParser(description='Scripts for backup vdi from running vms on XenServer')
    parser.add_argument(
         '--config',
         required=True,
         type=argparse.FileType('r'),
-        help='the config file in json format')
+        help='The config file in json format')
    args = parser.parse_args()
    # f=open('backup.json','r')
    result = json.load(args.config, object_pairs_hook=deunicodify_hook)
@@ -72,4 +72,3 @@ conf = get_config()
 
 for vm in conf.get('vms') :
     backup_vm(vm, conf.get("backup_sr"))
-    print
