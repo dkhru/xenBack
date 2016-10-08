@@ -63,7 +63,7 @@ def delete_old_vdi(vm,sr):
     log(cmd)
     output = commands.getoutput(cmd)
     for vdi in output.split("\n\n\n"):
-      lines = vm.splitlines()
+      lines = vdi.splitlines()
       uuid = lines[0].split(":")[1][1:]
       cmd = "xe vdi-destroy uuid="+uuid
       log(cmd)
