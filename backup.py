@@ -124,5 +124,6 @@ for vm in conf.get('vms') :
     else:
         cnt_e+=1
         if conf.get("stopOnError"):
+         log("Stop on Error is enabled. Exit on first error.")
          sys.exit(1)
 log("Backup complete Backed up "+str(cnt_v)+" VM's, "+str(cnt_e)+" error occurred.")
